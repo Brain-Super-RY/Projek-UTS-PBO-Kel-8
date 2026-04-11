@@ -21,6 +21,7 @@ public class Customer extends User {
     public void displayRole() {
         System.out.println("=== ROLE : PELANGGAN ===");
         System.out.println("Nama Pelanggan : " + getNamaLengkap());
+        System.out.println("No Telepon : " + noTelepon;
     }
 
     @Override
@@ -31,5 +32,16 @@ public class Customer extends User {
         System.out.println("Email: " + getEmail());
         System.out.println("No Telepon: " + noTelepon);
         System.out.println("Alamat: " + alamat);
+    }
+    //Override method login untuk customer 
+    @Override
+    public boolean login(String inputUsername, String inputPassword) {
+        boolean isValid = super.login(inputUsername, inputPassword);
+        if (isValid){
+            system.out.println("Login Customer berhasil Selamat datang, " + getNamaLengkap());
+        }else {
+            system.out.println(" Login Customer gagal ! username atau password salah. ");
+        }
+        return isValid;
     }
 }
