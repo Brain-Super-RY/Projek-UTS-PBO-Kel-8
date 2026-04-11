@@ -25,7 +25,7 @@ public class SewaPanel extends JPanel {
     private JTextField        txtNama;
     private JTextField        txtTelepon;
     private JComboBox<String> cmbAlat;
-    private JTextField        txtKamera; // <-- Sudah diganti jadi txtKamera
+    private JTextField        txtKamera;
     private JTextField        txtTglMulai;
     private JTextField        txtTglKembali;
     private JLabel            lblBiaya;
@@ -47,7 +47,7 @@ public class SewaPanel extends JPanel {
     // ── Method Styling Form (Teks Terang, BG Gelap) ───────────
     private void styleInput(JComponent c) {
         c.setBackground(UIKit.FIELD);
-        c.setForeground(UIKit.TEXT); // Teks warna putih/terang
+        c.setForeground(UIKit.TEXT);
         c.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(UIKit.BORDER),
                 new EmptyBorder(6, 10, 6, 10)));
@@ -62,7 +62,6 @@ public class SewaPanel extends JPanel {
         p.setBackground(UIKit.BG);
         p.setBorder(new EmptyBorder(16, 20, 10, 10));
 
-        // Judul kolom Serial diganti jadi Nama Kamera
         String[] cols = {"ID", "Nama Customer", "Telepon", "Jenis Alat", "Nama Kamera", "Tgl Mulai", "Tgl Kembali", "Total Biaya"};
         model = new DefaultTableModel(cols, 0) {
             @Override public boolean isCellEditable(int r, int c) { return false; }
@@ -80,16 +79,20 @@ public class SewaPanel extends JPanel {
         JButton btnSimpan  = UIKit.btn("💾 Simpan",  UIKit.GREEN);
         JButton btnUpdate  = UIKit.btn("✎ Update",   UIKit.BLUE);
         JButton btnRemove  = UIKit.btn("✕ Hapus",    UIKit.RED);
+        // TOMBOL BARU: SET DIKEMBALIKAN (Warna Ungu biar beda)
+        JButton btnKembali = UIKit.btn("✔ Set Dikembalikan", new Color(140, 50, 200)); 
         JButton btnReset   = UIKit.btn("↺ Reset",    new Color(65, 65, 95));
 
         btnSimpan.addActionListener(e  -> aksiSimpan());
         btnUpdate.addActionListener(e  -> aksiUpdate());
         btnRemove.addActionListener(e  -> aksiHapus());
+        btnKembali.addActionListener(e -> aksiSetDikembalikan()); // <-- Panggil fungsi baru
         btnReset .addActionListener(e  -> aksiReset());
 
         tombolRow.add(btnSimpan);
         tombolRow.add(btnUpdate);
         tombolRow.add(btnRemove);
+        tombolRow.add(btnKembali); // <-- Masukkan ke panel
         tombolRow.add(btnReset);
 
         p.add(UIKit.scroll(tabel), BorderLayout.CENTER);
@@ -106,7 +109,6 @@ public class SewaPanel extends JPanel {
         p.add(formTitle);
         p.add(UIKit.gap(16));
 
-        // Data customer
         p.add(UIKit.label("Nama Customer *"));
         p.add(UIKit.gap(2));
         txtNama = new JTextField();
@@ -124,7 +126,6 @@ public class SewaPanel extends JPanel {
         UIKit.addSep(p);
         p.add(UIKit.gap(14));
 
-        // Detail sewa
         p.add(UIKit.label("Jenis Alat *"));
         p.add(UIKit.gap(2));
         cmbAlat = UIKit.combo(DataStore.JENIS_ALAT);
@@ -135,7 +136,7 @@ public class SewaPanel extends JPanel {
         p.add(UIKit.label("Nama Kamera / Alat"));
         p.add(UIKit.gap(2));
         txtKamera = new JTextField();
-        styleInput(txtKamera); // Menerapkan styling kontras
+        styleInput(txtKamera); 
         p.add(txtKamera);
         p.add(UIKit.gap(5));
 
@@ -143,7 +144,7 @@ public class SewaPanel extends JPanel {
         p.add(UIKit.gap(2));
         txtTglMulai = new JTextField();
         txtTglMulai.setText(LocalDate.now().toString());
-        styleInput(txtTglMulai); // Menerapkan styling kontras
+        styleInput(txtTglMulai); 
         txtTglMulai.getDocument().addDocumentListener(docListener());
         p.add(txtTglMulai);
         p.add(UIKit.gap(5));
@@ -152,7 +153,7 @@ public class SewaPanel extends JPanel {
         p.add(UIKit.gap(2));
         txtTglKembali = new JTextField();
         txtTglKembali.setText(LocalDate.now().plusDays(3).toString());
-        styleInput(txtTglKembali); // Menerapkan styling kontras
+        styleInput(txtTglKembali); 
         txtTglKembali.getDocument().addDocumentListener(docListener());
         p.add(txtTglKembali);
         p.add(UIKit.gap(5));
@@ -200,19 +201,17 @@ public class SewaPanel extends JPanel {
             LocalDate mulai = LocalDate.parse(txtTglMulai.getText().trim());
             LocalDate balik = LocalDate.parse(txtTglKembali.getText().trim());
             
-            // --- PERBAIKAN: Parameter Customer disesuaikan ---
             String usernameAuto = nama.replaceAll("\\s+","").toLowerCase();
             Customer cust = new Customer(usernameAuto, "12345", nama, "-", txtTelepon.getText().trim(), "-");
             
             String jenis = (String) cmbAlat.getSelectedItem();
             double tarif = DataStore.getTarifAlat(jenis);
             
-            // Masukkan isi txtKamera ke parameter constructor
             SewaAlat alat = new SewaAlat(DataStore.nextSewaId(), jenis, txtKamera.getText().trim(), mulai, balik, tarif);
             Transaksi trx = new Transaksi(cust, alat);
             
             DataStore.daftarTransaksi.add(trx);
-            DataStore.simpanData(); // <-- SIMPAN PERMANEN KE FILE
+            DataStore.simpanData();
             
             muatTabel();
             aksiReset();
@@ -240,21 +239,25 @@ public class SewaPanel extends JPanel {
                     
                     String nama = txtNama.getText().trim();
                     String usernameAuto = nama.replaceAll("\\s+","").toLowerCase();
-                    // --- PERBAIKAN: Parameter Customer disesuaikan ---
                     Customer custBaru = new Customer(usernameAuto, "12345", nama, "-", txtTelepon.getText().trim(), "-");
                     
                     String jenis = (String) cmbAlat.getSelectedItem();
                     double tarif = DataStore.getTarifAlat(jenis);
                     
                     SewaAlat alatBaru = new SewaAlat(idLayanan, jenis, txtKamera.getText().trim(), mulai, balik, tarif);
-                    Transaksi trxBaru = new Transaksi(custBaru, alatBaru);
                     
+                    // Cek jika alat sebelumnya sudah dikembalikan, bawa datanya ke update
+                    if (t.getLayanan() instanceof SewaAlat) {
+                        alatBaru.setTglDikembalikan(((SewaAlat) t.getLayanan()).getTglDikembalikan());
+                    }
+
+                    Transaksi trxBaru = new Transaksi(custBaru, alatBaru);
                     DataStore.daftarTransaksi.set(i, trxBaru); 
                     break;
                 }
             }
             
-            DataStore.simpanData(); // <-- SIMPAN PERMANEN KE FILE
+            DataStore.simpanData(); 
             muatTabel();
             aksiReset();
             JOptionPane.showMessageDialog(this, "Data berhasil diperbarui.", "Sukses", JOptionPane.INFORMATION_MESSAGE);
@@ -273,9 +276,53 @@ public class SewaPanel extends JPanel {
             String idLayanan = model.getValueAt(barisDipilih, 0).toString();
             DataStore.daftarTransaksi.removeIf(t -> t.getLayanan().getIdLayanan().equals(idLayanan));
             
-            DataStore.simpanData(); // <-- SIMPAN PERMANEN KE FILE
+            DataStore.simpanData(); 
             muatTabel();
             aksiReset();
+        }
+    }
+
+    // ── FITUR BARU: SET BARANG DIKEMBALIKAN ───────────────────
+    private void aksiSetDikembalikan() {
+        if (barisDipilih < 0) {
+            JOptionPane.showMessageDialog(this, "Pilih data di tabel yang barangnya sudah dikembalikan.", "Info", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        
+        String idLayanan = model.getValueAt(barisDipilih, 0).toString();
+        
+        for (Transaksi t : DataStore.daftarTransaksi) {
+            if (t.getLayanan().getIdLayanan().equals(idLayanan) && t.getLayanan() instanceof SewaAlat) {
+                SewaAlat alat = (SewaAlat) t.getLayanan();
+                
+                // Cek apakah sudah pernah di-set dikembalikan
+                if (alat.getTglDikembalikan() != null) {
+                    JOptionPane.showMessageDialog(this, "Kamera ini sudah dikembalikan pada tanggal: " + alat.getTglDikembalikan(), "Info", JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
+
+                int ok = JOptionPane.showConfirmDialog(this, "Tandai kamera ini SELESAI / TELAH DIKEMBALIKAN hari ini?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+                if (ok == JOptionPane.YES_OPTION) {
+                    // Set tanggal dikembalikan menjadi hari ini
+                    alat.setTglDikembalikan(LocalDate.now());
+                    
+                    DataStore.simpanData(); // Simpan perubahan
+                    muatTabel();
+                    aksiReset();
+                    
+                    // Cek apakah dia kena denda atau tidak
+                    if (alat.hitungHariTelat() > 0) {
+                        JOptionPane.showMessageDialog(this, 
+                            "Pelanggan terlambat mengembalikan selama " + alat.hitungHariTelat() + " hari!\n" +
+                            "Total Denda: Rp " + String.format("%,.0f", alat.hitungTotalDenda()) + "\n" +
+                            "Sistem telah menambahkan denda ini ke Total Biaya.", 
+                            "Peringatan Denda", JOptionPane.WARNING_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Barang dikembalikan tepat waktu. Tidak ada denda.", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                }
+                break;
+            }
         }
     }
 
@@ -291,18 +338,16 @@ public class SewaPanel extends JPanel {
         updateBiaya();
     }
 
-    // ── Isi form dari baris yang diklik ───────────────────────
     private void isiFormDariBaris() {
         barisDipilih = tabel.getSelectedRow();
         if (barisDipilih < 0) return;
         
         String idLayanan = model.getValueAt(barisDipilih, 0).toString();
         
-        for (studiokita.model.Transaksi t : DataStore.daftarTransaksi) {
-            if (t.getLayanan().getIdLayanan().equals(idLayanan) && t.getLayanan() instanceof studiokita.model.SewaAlat) {
-                studiokita.model.SewaAlat alat = (studiokita.model.SewaAlat) t.getLayanan();
+        for (Transaksi t : DataStore.daftarTransaksi) {
+            if (t.getLayanan().getIdLayanan().equals(idLayanan) && t.getLayanan() instanceof SewaAlat) {
+                SewaAlat alat = (SewaAlat) t.getLayanan();
                 
-                // --- PERBAIKAN: getNamaLengkap() dan getNoTelepon() ---
                 txtNama.setText(t.getCustomer().getNamaLengkap());
                 txtTelepon.setText(t.getCustomer().getNoTelepon());
                 
@@ -316,7 +361,6 @@ public class SewaPanel extends JPanel {
         }
     }
 
-    // ── Kalkulasi & Muat Tabel ────────────────────────────────
     private double hitungBiayaSewa() {
         try {
             LocalDate mulai = LocalDate.parse(txtTglMulai.getText().trim());
@@ -338,14 +382,21 @@ public class SewaPanel extends JPanel {
         for (Transaksi r : DataStore.daftarTransaksi) {
             if (r.getLayanan() instanceof SewaAlat) {
                 SewaAlat alat = (SewaAlat) r.getLayanan();
+                
+                // Tambahkan teks kalau sudah dikembalikan
+                String statusKembali = alat.getTglKembali().toString();
+                if (alat.getTglDikembalikan() != null) {
+                    statusKembali += " (Dikembalikan: " + alat.getTglDikembalikan() + ")";
+                }
+
                 model.addRow(new Object[]{
                         alat.getIdLayanan(), 
-                        r.getCustomer().getNamaLengkap(), // <-- PERBAIKAN DI SINI
-                        r.getCustomer().getNoTelepon(),   // <-- PERBAIKAN DI SINI
+                        r.getCustomer().getNamaLengkap(), 
+                        r.getCustomer().getNoTelepon(),   
                         alat.getJenisAlat(),
-                        alat.getNamaKamera(), // Menyimpan isi nama kamera
+                        alat.getNamaKamera(), 
                         alat.getTglMulai(), 
-                        alat.getTglKembali(),
+                        statusKembali, // <-- Menampilkan status di tabel
                         "Rp " + String.format("%,.0f", r.getTotalBiaya())
                 });
             }
