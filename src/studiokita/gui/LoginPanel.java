@@ -81,11 +81,6 @@ public class LoginPanel extends JPanel {
         btnKeluar.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnKeluar.addActionListener(e -> System.exit(0));
 
-        JLabel hint = new JLabel("Hint: admin / admin123  ATAU  user / user123");
-        hint.setFont(new Font("Segoe UI", Font.ITALIC, 11));
-        hint.setForeground(UIKit.BORDER);
-        hint.setAlignmentX(Component.CENTER_ALIGNMENT);
-
         // ── Rakit ─────────────────────────────────────────────
         card.add(logo);
         card.add(UIKit.gap(6));
@@ -107,7 +102,6 @@ public class LoginPanel extends JPanel {
         card.add(UIKit.gap(8));
         card.add(btnKeluar);
         card.add(UIKit.gap(20));
-        card.add(hint);
 
         // Enter → login
         txtPass.addActionListener(e -> prosesLogin());

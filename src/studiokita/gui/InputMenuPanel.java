@@ -17,8 +17,32 @@ public class InputMenuPanel extends JPanel {
         this.nav = nav;
         setBackground(UIKit.BG);
         setLayout(new BorderLayout());
-        add(UIKit.pageHeader("📝", "Input Data Customer",
-                "Pilih jenis layanan yang ingin diinput", UIKit.BLUE), BorderLayout.NORTH);
+        
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(UIKit.SURFACE);
+        headerPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 0, 1, 0, UIKit.BORDER),
+                new EmptyBorder(16, 28, 16, 28)));
+
+        JPanel titleArea = new JPanel();
+        titleArea.setLayout(new BoxLayout(titleArea, BoxLayout.Y_AXIS));
+        titleArea.setOpaque(false);
+
+        JLabel lblTitle = new JLabel("📝 INPUT DATA CUSTOMER");
+        lblTitle.setFont(new Font("Segoe UI Emoji", Font.BOLD, 22));
+        lblTitle.setForeground(UIKit.BLUE);
+
+        JLabel lblDesc = new JLabel("Pilih jenis layanan yang ingin diinput");
+        lblDesc.setFont(UIKit.FONT_NORMAL);
+        lblDesc.setForeground(UIKit.MUTED);
+
+        titleArea.add(lblTitle);
+        titleArea.add(UIKit.gap(4));
+        titleArea.add(lblDesc);
+        
+        headerPanel.add(titleArea, BorderLayout.WEST);
+        
+        add(headerPanel, BorderLayout.NORTH);
         add(buildContent(), BorderLayout.CENTER);
         add(buildBottom(), BorderLayout.SOUTH);
     }

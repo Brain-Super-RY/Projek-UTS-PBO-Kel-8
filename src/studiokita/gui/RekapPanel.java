@@ -23,10 +23,33 @@ public class RekapPanel extends JPanel {
 
         JPanel northArea = new JPanel(new BorderLayout());
         northArea.setBackground(UIKit.BG);
-        northArea.add(UIKit.pageHeader("👥", "Tampilkan Data Customer",
-                "Rekap semua data pelanggan sewa & jasa foto", UIKit.GREEN), BorderLayout.NORTH);
-        northArea.add(buildKartu(), BorderLayout.SOUTH);
 
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(UIKit.SURFACE);
+        headerPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 0, 1, 0, UIKit.BORDER),
+                new EmptyBorder(16, 28, 16, 28)));
+
+        JPanel titleArea = new JPanel();
+        titleArea.setLayout(new BoxLayout(titleArea, BoxLayout.Y_AXIS));
+        titleArea.setOpaque(false);
+
+        JLabel lblTitle = new JLabel("👥 TAMPILKAN DATA CUSTOMER");
+        lblTitle.setFont(new Font("Segoe UI Emoji", Font.BOLD, 22));
+        lblTitle.setForeground(UIKit.GREEN);
+
+        JLabel lblDesc = new JLabel("Rekap semua data pelanggan sewa & jasa foto");
+        lblDesc.setFont(UIKit.FONT_NORMAL);
+        lblDesc.setForeground(UIKit.MUTED);
+
+        titleArea.add(lblTitle);
+        titleArea.add(UIKit.gap(4));
+        titleArea.add(lblDesc);
+
+        headerPanel.add(titleArea, BorderLayout.WEST);
+        northArea.add(headerPanel, BorderLayout.NORTH);
+        northArea.add(buildKartu(), BorderLayout.SOUTH);
+        
         add(northArea, BorderLayout.NORTH);
         add(buildTengah(), BorderLayout.CENTER);
         add(buildBottom(), BorderLayout.SOUTH);
@@ -72,7 +95,7 @@ public class RekapPanel extends JPanel {
         tabel = new JTable(model);
         tabel.setRowHeight(28);
         tabel.getTableHeader().setBackground(UIKit.CARD);
-        tabel.getTableHeader().setForeground(UIKit.TEXT);
+        tabel.getTableHeader().setForeground(Color.BLACK);
         tabel.setBackground(UIKit.SURFACE);
         tabel.setForeground(UIKit.TEXT);
 
@@ -117,8 +140,8 @@ public class RekapPanel extends JPanel {
 
             model.addRow(new Object[]{ 
                 no++, 
-                r.getCustomer().getNamaLengkap(), // <-- SUDAH DIPERBAIKI
-                r.getCustomer().getNoTelepon(),   // <-- SUDAH DIPERBAIKI
+                r.getCustomer().getNamaLengkap(),
+                r.getCustomer().getNoTelepon(),
                 jenisLayanan, 
                 r.getLayanan().getDeskripsi(), 
                 "Rp " + String.format("%,.0f", r.getTotalBiaya()), 

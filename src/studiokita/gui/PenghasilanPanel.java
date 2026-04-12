@@ -36,11 +36,35 @@ public class PenghasilanPanel extends JPanel {
 
         JPanel northArea = new JPanel(new BorderLayout());
         northArea.setBackground(UIKit.BG);
-        northArea.add(UIKit.pageHeader("💰", "Detail Penghasilan",
-                "Rekap penghasilan masuk hari ini", UIKit.ACCENT), BorderLayout.NORTH);
+
+        // ── INI BAGIAN YANG DIUBAH (Header Custom dengan Emoji) ─────────
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(UIKit.SURFACE);
+        headerPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 0, 1, 0, UIKit.BORDER),
+                new EmptyBorder(16, 28, 16, 28)));
+
+        JPanel titleArea = new JPanel();
+        titleArea.setLayout(new BoxLayout(titleArea, BoxLayout.Y_AXIS));
+        titleArea.setOpaque(false);
+
+        JLabel lblTitle = new JLabel("💰 DETAIL PENGHASILAN");
+        lblTitle.setFont(new Font("Segoe UI Emoji", Font.BOLD, 22));
+        lblTitle.setForeground(UIKit.ACCENT);
+
+        JLabel lblDesc = new JLabel("Rekap penghasilan masuk hari ini");
+        lblDesc.setFont(UIKit.FONT_NORMAL);
+        lblDesc.setForeground(UIKit.MUTED);
+
+        titleArea.add(lblTitle);
+        titleArea.add(UIKit.gap(4));
+        titleArea.add(lblDesc);
+
+        headerPanel.add(titleArea, BorderLayout.WEST);
+        northArea.add(headerPanel, BorderLayout.NORTH);
         northArea.add(buildKartuRingkasan(), BorderLayout.SOUTH);
 
-        add(northArea,     BorderLayout.NORTH);
+        add(northArea,      BorderLayout.NORTH);
         add(buildTengah(), BorderLayout.CENTER);
         add(buildBottom(), BorderLayout.SOUTH);
     }
@@ -90,6 +114,8 @@ public class PenghasilanPanel extends JPanel {
         };
         JTable tabel = new JTable(model);
         UIKit.styleTable(tabel, UIKit.ACCENT);
+        tabel.setForeground(Color.BLACK);
+        tabel.getTableHeader().setForeground(Color.BLACK);
         tabel.getColumnModel().getColumn(3).setPreferredWidth(260);
 
         // Footer grand total

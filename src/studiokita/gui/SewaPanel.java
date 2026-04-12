@@ -37,8 +37,32 @@ public class SewaPanel extends JPanel {
         this.nav = nav;
         setBackground(UIKit.BG);
         setLayout(new BorderLayout());
-        add(UIKit.pageHeader("🎒", "Sewa Alat",
-                "Input & kelola data penyewaan alat fotografi", UIKit.ORANGE), BorderLayout.NORTH);
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(UIKit.SURFACE);
+        headerPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 0, 1, 0, UIKit.BORDER),
+                new EmptyBorder(16, 28, 16, 28)));
+
+        JPanel titleArea = new JPanel();
+        titleArea.setLayout(new BoxLayout(titleArea, BoxLayout.Y_AXIS));
+        titleArea.setOpaque(false);
+
+        JLabel lblTitle = new JLabel("🎒 SEWA ALAT");
+        lblTitle.setFont(new Font("Segoe UI Emoji", Font.BOLD, 22));
+        lblTitle.setForeground(UIKit.ORANGE);
+
+        JLabel lblDesc = new JLabel("Input & kelola data penyewaan alat fotografi");
+        lblDesc.setFont(UIKit.FONT_NORMAL);
+        lblDesc.setForeground(UIKit.MUTED);
+
+        titleArea.add(lblTitle);
+        titleArea.add(UIKit.gap(4));
+        titleArea.add(lblDesc);
+        
+        headerPanel.add(titleArea, BorderLayout.WEST);
+        
+        add(headerPanel, BorderLayout.NORTH);
+        
         add(buildTengah(), BorderLayout.CENTER);
         add(buildForm(),   BorderLayout.EAST);
         add(buildBottom(), BorderLayout.SOUTH);
@@ -67,7 +91,7 @@ public class SewaPanel extends JPanel {
             @Override public boolean isCellEditable(int r, int c) { return false; }
         };
         tabel = new JTable(model);
-        UIKit.styleTable(tabel, UIKit.ORANGE);
+        UIKit.styleTable(tabel, Color.BLACK);
         tabel.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) isiFormDariBaris();
         });
@@ -76,12 +100,12 @@ public class SewaPanel extends JPanel {
         JPanel tombolRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
         tombolRow.setBackground(UIKit.BG);
 
-        JButton btnSimpan  = UIKit.btn("💾 Simpan",  UIKit.GREEN);
-        JButton btnUpdate  = UIKit.btn("✎ Update",   UIKit.BLUE);
-        JButton btnRemove  = UIKit.btn("✕ Hapus",    UIKit.RED);
+        JButton btnSimpan  = UIKit.btn("Simpan",  UIKit.GREEN);
+        JButton btnUpdate  = UIKit.btn("Update",   UIKit.BLUE);
+        JButton btnRemove  = UIKit.btn("Hapus",    UIKit.RED);
         // TOMBOL BARU: SET DIKEMBALIKAN (Warna Ungu biar beda)
-        JButton btnKembali = UIKit.btn("✔ Set Dikembalikan", new Color(140, 50, 200)); 
-        JButton btnReset   = UIKit.btn("↺ Reset",    new Color(65, 65, 95));
+        JButton btnKembali = UIKit.btn("Set Dikembalikan", new Color(140, 50, 200)); 
+        JButton btnReset   = UIKit.btn("Reset",    new Color(65, 65, 95));
 
         btnSimpan.addActionListener(e  -> aksiSimpan());
         btnUpdate.addActionListener(e  -> aksiUpdate());

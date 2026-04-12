@@ -35,7 +35,9 @@ public class DashboardPanel extends JPanel {
                 new EmptyBorder(12, 28, 12, 28)));
         bar.setPreferredSize(new Dimension(0, 60));
 
-        JLabel lblApp = UIKit.heading("📷  Studio Kita", UIKit.ACCENT, UIKit.FONT_H2);
+        JLabel lblApp = new JLabel("📸 STUDIO KITA");
+        lblApp.setFont(new Font("Segoe UI Emoji", Font.BOLD, 24)); 
+        lblApp.setForeground(UIKit.ACCENT);
 
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 5));
         rightPanel.setOpaque(false);

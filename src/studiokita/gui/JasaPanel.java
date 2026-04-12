@@ -32,7 +32,32 @@ public class JasaPanel extends JPanel {
         this.nav = nav;
         setBackground(UIKit.BG);
         setLayout(new BorderLayout());
-        add(UIKit.pageHeader("📸", "Jasa Foto", "Input & kelola booking sesi foto pelanggan", UIKit.BLUE), BorderLayout.NORTH);
+
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(UIKit.SURFACE);
+        headerPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 0, 1, 0, UIKit.BORDER),
+                new EmptyBorder(16, 28, 16, 28)));
+
+        JPanel titleArea = new JPanel();
+        titleArea.setLayout(new BoxLayout(titleArea, BoxLayout.Y_AXIS));
+        titleArea.setOpaque(false);
+
+        JLabel lblTitle = new JLabel("📸 JASA FOTO");
+        lblTitle.setFont(new Font("Segoe UI Emoji", Font.BOLD, 22));
+        lblTitle.setForeground(UIKit.BLUE);
+
+        JLabel lblDesc = new JLabel("Input & kelola booking sesi foto pelanggan");
+        lblDesc.setFont(UIKit.FONT_NORMAL);
+        lblDesc.setForeground(UIKit.MUTED);
+
+        titleArea.add(lblTitle);
+        titleArea.add(UIKit.gap(4));
+        titleArea.add(lblDesc);
+        
+        headerPanel.add(titleArea, BorderLayout.WEST);
+        
+        add(headerPanel, BorderLayout.NORTH);
         add(buildTengah(), BorderLayout.CENTER);
         add(buildForm(),   BorderLayout.EAST);
         add(buildBottom(), BorderLayout.SOUTH);
@@ -45,8 +70,20 @@ public class JasaPanel extends JPanel {
         c.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(UIKit.BORDER),
                 new EmptyBorder(6, 10, 6, 10)));
+        
         if (c instanceof JTextField) {
             ((JTextField) c).setCaretColor(UIKit.TEXT);
+        } else if (c instanceof JSpinner) {
+            // ── TAMBAHAN KHUSUS UNTUK JSPINNER (Angka) ──
+            // Mengambil text field di dalam JSpinner untuk diubah warnanya
+            JSpinner spinner = (JSpinner) c;
+            JComponent editor = spinner.getEditor();
+            if (editor instanceof JSpinner.DefaultEditor) {
+                JFormattedTextField textField = ((JSpinner.DefaultEditor) editor).getTextField();
+                textField.setForeground(Color.BLACK);
+                textField.setBackground(UIKit.FIELD);
+                textField.setCaretColor(Color.BLACK);
+            }
         }
     }
 
@@ -60,7 +97,7 @@ public class JasaPanel extends JPanel {
             @Override public boolean isCellEditable(int r, int c) { return false; }
         };
         tabel = new JTable(model);
-        UIKit.styleTable(tabel, UIKit.BLUE);
+        UIKit.styleTable(tabel, Color.BLACK);
         tabel.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) isiFormDariBaris();
         });
@@ -68,10 +105,10 @@ public class JasaPanel extends JPanel {
         JPanel tombolRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
         tombolRow.setBackground(UIKit.BG);
 
-        JButton btnSimpan = UIKit.btn("💾 Simpan", UIKit.GREEN);
-        JButton btnUpdate = UIKit.btn("✎ Update",  UIKit.BLUE);
-        JButton btnRemove = UIKit.btn("✕ Hapus",   UIKit.RED);
-        JButton btnReset  = UIKit.btn("↺ Reset",   new Color(65, 65, 95));
+        JButton btnSimpan = UIKit.btn("Simpan", UIKit.GREEN);
+        JButton btnUpdate = UIKit.btn("Update",  UIKit.BLUE);
+        JButton btnRemove = UIKit.btn("Hapus",   UIKit.RED);
+        JButton btnReset  = UIKit.btn("Reset",   new Color(65, 65, 95));
 
         btnSimpan.addActionListener(e -> aksiSimpan());
         btnUpdate.addActionListener(e -> aksiUpdate());
